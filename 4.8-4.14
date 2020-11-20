@@ -1,0 +1,40 @@
+"""4.8"""
+taxi = pd.read_csv('taxi_peru.csv', sep = ";", parse_dates = ["start_at", "end_at", "arrived_at"])
+taxi.query("start_type == 'asap' | start_type == 'reserved'")
+
+"""4.9"""
+taxi["wait_time"] = taxi.arrived_at - taxi.start_at
+taxi["wait_time"] = taxi["wait_time"].astype("timedelta64[m]")
+
+"""4.10"""
+taxi.query("start_type == 'reserved' & wait_time > 0")\
+    .groupby("driver_id")\
+    .agg({"journey_id": "count"})\
+    .idxmax()
+
+taxi.query("start_type == 'reserved' & wait_time > 0")\
+  .driver_id\
+  .value_counts()\
+  .idxmax()
+  
+"""4.11"""
+taxi["month"] = taxi.start_at.dt.month_name()
+taxi["weekday"] = taxi.start_at.dt.day_name()
+
+"""4.12"""
+plt.figure(figsize = (12, 8))
+sns.countplot(x = taxi.month)
+sns.despine()
+#7
+
+"""4.13"""
+sns.countplot(x = taxi.weekday)
+sns.despine()
+#Wednesday
+
+"""4.14"""
+mau = taxi.groupby(taxi.start_at.dt.month)\
+    .agg({"user_id": pd.Series.nunique})
+sns.lineplot(data = mau, markers = True)
+xticks = range(1, 13)
+plt.xticks(xticks);

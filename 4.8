@@ -1,2 +1,0 @@
-taxi = pd.read_csv('taxi_peru.csv', sep = ";", parse_dates = ["start_at", "end_at", "arrived_at"])
-taxi.query("start_type == 'asap' | start_type == 'reserved'")
