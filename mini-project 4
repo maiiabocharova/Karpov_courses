@@ -1,0 +1,15 @@
+"""Reading of several files"""
+path = "C:/Users/Омут/Downloads/tictactoe/data/"
+df = pd.DataFrame()
+
+for current_path, dirs, files in os.walk(path):
+    for file in files:
+        data_path = f"{current_path}\\{file}"
+        part_df = pd.read_csv(data_path)
+        path_parts = current_path.split("/")
+        last_parts = path_parts[-1].split("\\")
+        part_df["date"] = last_parts[0]
+        part_df["name"] = last_parts[-1]
+        df = pd.concat((df, part_df))
+df = df.drop(["Unnamed: 0"], axis=1)
+df.reset_index(drop=True)
