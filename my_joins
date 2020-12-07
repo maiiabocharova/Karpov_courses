@@ -1,0 +1,82 @@
+Introduction
+So far you have learned quite a lot about querying data from a table based on certain conditions. But when you get to real projects you will often need to use two or more tables to get the information you want. To understand why storing information in several tables may be a much better idea than storing everything in just one table let's recall that programmers are always trying to avoid redundancy and make their code look more neat and be better maintainable. This concept is also valid for database tables.
+
+Here are different types of JOINs in SQL:
++ [INNER] JOIN: returns records that have matching values in both tables.
++ LEFT/RIGHT JOIN: returns all records from the left/right table and the matching values from the right/left table.
++ FULL [OUTER] JOIN: returns all records when there is a match in either left or right table
++ CROSS JOIN: takes every single record from left table and joins it to every record in right table.
+ 
+
+INNER JOIN
+To demonstrate how INNER JOIN works let us consider the following tables.
+
+Let us see what pet belong to what character. To do this we need
+SELECT character_name, pet_species 
+    FROM character 
+    INNER JOIN pet
+    ON character.charater_id = pet.charachter_id
+As you can see, we've got
+
+But, as you can suspect not all of the characters have pets. For example, Severus Snape definitely doesn’t have one. He has a whole faculty of snakes, but regarding pets 
+
+To have him included in our final result we will use another type of JOIN - LEFT JOIN.
+LEFT JOIN includes all records in the left table, even if they do not have a match on the key field in the right table. The common syntax for INNER JOIN is:
+
+SELECT a.col_name1, b.col_name2
+  FROM TABLE_A AS a
+       INNER JOIN TABLE_B AS b
+       ON a.id = b.id
+Note that we are can use aliases for the tables names. That gets extremely helpful, when names of the tables are getting larger. Consider the example of a query from Google Cloud table `bigquery-public-data.stackoverflow.posts_questions`
+
+Let's consider the following example.
+
+TASKS
+Write a query which for every character selects its name and pet_species which they have. If a character doesn’t have any, it should be written “no pet yet”.
+SELECT character.character_name AS Name, 
+COALESCE(pet.pet_species, 'no pet yet') AS Pet 
+FROM character 
+    LEFT JOIN pet
+    ON character.character_id = pet.character_id
+ 
+Creating necessary tables
+
+USE learning;
+CREATE TABLE character (
+    character_id INT,
+    character_name VARCHAR(30),
+universe_id INT
+	);
+
+CREATE TABLE universe (
+    universe_id INT,
+    universe_name VARCHAR(30),
+    author VARCHAR(30)
+    );
+    
+CREATE TABLE pet (
+    character_id INT,
+    pet_species VARCHAR(20)
+    );
+INSERT INTO character (character_id, character_name, universe_id)
+    VALUES 
+    (1, 'Harry Potter', 1),
+    (2, 'Severus Snape', 1),
+    (3, 'Voldemort', 1),
+    (4, 'Hermiony Granger', 1),
+    (5, 'Tyrion Lanister', 2),
+    (6, 'Daenerys Targaryen', 2),
+    (7, 'Argus Filch', 1);
+
+INSERT INTO pet (character_id, pet_species)
+    VALUES
+    (1, 'owl'),
+    (3, 'snake'),
+    (4, 'cat'),
+    (6, 'dragon'),
+    (7, 'cat');
+    
+INSERT INTO universe (universe_id, universe_name, author)
+    VALUES
+    (1, 'Harry Potter', 'Joanne Rowling'),
+    (2, 'Game of thrones', 'George R. R. Martin');
